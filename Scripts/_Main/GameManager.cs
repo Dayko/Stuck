@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class Game {
 	
@@ -13,13 +14,16 @@ public static class Game {
 	}
 	public static GameState gameState;
 
+	
 	public enum CharacterType {
 		MAGICIAN,
 		BUILDER,
 		WARRIOR,
 		CAMELEON
 	};
-	public static CharacterType chrSelected = CharacterType.MAGICIAN;
+	public static CharacterType chrTypeSelected;
+	public static Dictionary<CharacterType, GameObject> charactersGO;
+	public static Dictionary<CharacterType, Character> characters;
 
 
 	// Register every important section needed
@@ -31,8 +35,37 @@ public static class Game {
 		mainCamera = GameObject.FindObjectOfType(typeof(MainCamera)) as MainCamera;
 
 		gameState = GameState.PLAY;
+
+		chrTypeSelected = CharacterType.MAGICIAN;
+		charactersGO = new Dictionary<CharacterType, GameObject>();
+		if (!GameObject.FindGameObjectWithTag("Character1")) {
+			Debug.LogError("Set tags 'CharacterN' to each GameObject character (with N between 1 and 4)");
+		}
+		charactersGO.Add(CharacterType.MAGICIAN, GameObject.FindGameObjectWithTag("Character1"));
+		charactersGO.Add(CharacterType.BUILDER, GameObject.FindGameObjectWithTag("Character2"));
+		charactersGO.Add(CharacterType.WARRIOR, GameObject.FindGameObjectWithTag("Character3"));
+		charactersGO.Add(CharacterType.CAMELEON, GameObject.FindGameObjectWithTag("Character4"));
+		characters = new Dictionary<CharacterType, Character>();
+		characters.Add(CharacterType.MAGICIAN, charactersGO[CharacterType.MAGICIAN].GetComponent<Character>());
+		characters.Add(CharacterType.BUILDER, charactersGO[CharacterType.BUILDER].GetComponent<Character>());
+		characters.Add(CharacterType.WARRIOR, charactersGO[CharacterType.WARRIOR].GetComponent<Character>());
+		characters.Add(CharacterType.CAMELEON, charactersGO[CharacterType.CAMELEON].GetComponent<Character>());
+	}
+
+
+
+	public static GameObject GetChrGOSelected() {
+		return charactersGO[chrTypeSelected];
+	}
+
+
+	public static Character GetChrSelected() {
+		return characters[chrTypeSelected];
 	}
 }
+
+
+
 
 
 // Only call Game class Init() automatically

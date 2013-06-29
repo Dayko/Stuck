@@ -29,15 +29,12 @@ public class Character : MonoBehaviour {
 	private float moveMaxSpeed = 10f;
 	private float moveCurrentSpeed;
 
-	private Transform cameraTransform; // tmp
-
 
 	
 	void Start () {
 		state = State.Idle;
 
 		controller = GetComponent<CharacterController>();
-		cameraTransform = Camera.main.transform;
 		moveTargetPos = transform.position;
 	}
 
@@ -45,7 +42,7 @@ public class Character : MonoBehaviour {
 	// Is it the character with the actual focus ?
 	// ----------------------------------------------
 	public bool IsSelected() {
-		return (Game.chrSelected == type);
+		return (Game.chrTypeSelected == type);
 	}
 
 
@@ -53,7 +50,8 @@ public class Character : MonoBehaviour {
 	// ----------------------------------------------
 	public void SwitchFocusCharacter(Game.CharacterType newChrSelected) {
 		// TODO : check if current selected is not locked
-		Game.chrSelected = newChrSelected;
+		Game.chrTypeSelected = newChrSelected;
+		Game.mainCamera.FocusOnSelectedChr();
 	}
 
 
@@ -129,7 +127,6 @@ public class Character : MonoBehaviour {
 	// ----------------------------------------------
 	void Update() {
 		UpdateMouse();
-		UpdateCamera();
 
 		switch (state) {
 			case State.Idle:
@@ -181,20 +178,10 @@ public class Character : MonoBehaviour {
 			if (Physics.Raycast(ray, out hit) && Input.mousePosition.x > 100 && Input.mousePosition.y > 100) {
 				if (hit.collider.transform == transform) {
 					SwitchFocusCharacter(type);
-				} else if (hit.collider.tag != "Player" && IsSelected()) { // Move selected character
+				} else if (!hit.collider.tag.Contains("Character") && IsSelected()) { // Move selected character
 					SetTargetPos(hit.point);
 				}
 			}
-		}
-	}
-
-
-	private void UpdateCamera() {
-		// For selected character only
-		if (IsSelected()) {
-			// Update camera position
-			cameraTransform.position = Vector3.Lerp(cameraTransform.position, new Vector3(transform.position.x, cameraTransform.position.y, transform.position.z - 30), Time.deltaTime * 4);
-
 		}
 	}
 }

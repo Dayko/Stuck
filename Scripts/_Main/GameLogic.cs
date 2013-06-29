@@ -18,7 +18,7 @@ public class GameLogic : MonoBehaviour {
 
 	void Start() {
 		dayCurrent = 1;
-		timeCurrent = 140;
+		timeCurrent = 90; // tmp
 	}
 
 
@@ -31,6 +31,7 @@ public class GameLogic : MonoBehaviour {
 		dayCurrent++;
 		timeCurrent = 0;
 		Debug.Log("Day " + dayCurrent + " start !");
+		(GameObject.FindObjectOfType(typeof(Light)) as Light).enabled = true; // tmp
 	}
 
 
@@ -42,6 +43,7 @@ public class GameLogic : MonoBehaviour {
 		isNight = true;
 		isNightStarting = true;
 		Debug.Log("Night is falling, watch out !");
+		(GameObject.FindObjectOfType(typeof(Light)) as Light).enabled = false; // tmp
 	}
 
 
