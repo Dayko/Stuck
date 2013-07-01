@@ -3,27 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 
 public static class Game {
-	
+	// Main components
 	public static GameLogic gameLogic;
 	public static InputTouch inputTouch;
 	public static MainCamera mainCamera;
 
+	// Game state
 	public enum GameState {
 		PLAY,
 		PAUSE
 	}
 	public static GameState gameState;
 
-	
-	public enum CharacterType {
-		MAGICIAN,
-		BUILDER,
-		WARRIOR,
-		CAMELEON
-	};
-	public static CharacterType chrTypeSelected;
-	public static Dictionary<CharacterType, GameObject> charactersGO;
-	public static Dictionary<CharacterType, Character> characters;
+	// Characters accessors
+	public const int CHR_MAGICIAN	= 0;
+	public const int CHR_BUILDER	= 1;
+	public const int CHR_WARRIOR	= 2;
+	public const int CHR_CAMELEON 	= 3;
+	public static int chrSelected;
+
+	public static List<GameObject> charactersGO;
+	public static List<Character> characters;
 
 
 	// Register every important section needed
@@ -36,31 +36,31 @@ public static class Game {
 
 		gameState = GameState.PLAY;
 
-		chrTypeSelected = CharacterType.MAGICIAN;
-		charactersGO = new Dictionary<CharacterType, GameObject>();
+		chrSelected = 0; // Magician
+		charactersGO = new List<GameObject>();
 		if (!GameObject.FindGameObjectWithTag("Character1")) {
 			Debug.LogError("Set tags 'CharacterN' to each GameObject character (with N between 1 and 4)");
 		}
-		charactersGO.Add(CharacterType.MAGICIAN, GameObject.FindGameObjectWithTag("Character1"));
-		charactersGO.Add(CharacterType.BUILDER, GameObject.FindGameObjectWithTag("Character2"));
-		charactersGO.Add(CharacterType.WARRIOR, GameObject.FindGameObjectWithTag("Character3"));
-		charactersGO.Add(CharacterType.CAMELEON, GameObject.FindGameObjectWithTag("Character4"));
-		characters = new Dictionary<CharacterType, Character>();
-		characters.Add(CharacterType.MAGICIAN, charactersGO[CharacterType.MAGICIAN].GetComponent<Character>());
-		characters.Add(CharacterType.BUILDER, charactersGO[CharacterType.BUILDER].GetComponent<Character>());
-		characters.Add(CharacterType.WARRIOR, charactersGO[CharacterType.WARRIOR].GetComponent<Character>());
-		characters.Add(CharacterType.CAMELEON, charactersGO[CharacterType.CAMELEON].GetComponent<Character>());
+		charactersGO.Add(GameObject.FindGameObjectWithTag("Character1"));
+		charactersGO.Add(GameObject.FindGameObjectWithTag("Character2"));
+		charactersGO.Add(GameObject.FindGameObjectWithTag("Character3"));
+		charactersGO.Add(GameObject.FindGameObjectWithTag("Character4"));
+		characters = new List<Character>();
+		characters.Add(charactersGO[CHR_MAGICIAN].GetComponent<Character>());
+		characters.Add(charactersGO[CHR_BUILDER].GetComponent<Character>());
+		characters.Add(charactersGO[CHR_WARRIOR].GetComponent<Character>());
+		characters.Add(charactersGO[CHR_CAMELEON].GetComponent<Character>());
 	}
 
 
 
 	public static GameObject GetChrGOSelected() {
-		return charactersGO[chrTypeSelected];
+		return charactersGO[chrSelected];
 	}
 
 
 	public static Character GetChrSelected() {
-		return characters[chrTypeSelected];
+		return characters[chrSelected];
 	}
 }
 
@@ -73,6 +73,6 @@ public static class Game {
 public class GameManager : MonoBehaviour {
 	void Awake() {
 		Game.Init();
-		DontDestroyOnLoad(gameObject);
+		Application.runInBackground = true;
 	}
 }

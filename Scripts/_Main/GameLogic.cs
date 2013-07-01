@@ -5,11 +5,12 @@ public class GameLogic : MonoBehaviour {
 
 	// Day-Night time cycle
 	private int dayCurrent;
+	private bool isDayStarting;
 	private bool isNight;
 	private bool isNightStarting;
 	private float timeCurrent;
-	private float timeStartNight = 100;
-	private float timeEndNight = 150;
+	private float timeStartNight = 50;
+	private float timeEndNight = 75;
 
 	// Timeline
 	private Vector2 tlSize = new Vector2(300, 10);
@@ -18,7 +19,7 @@ public class GameLogic : MonoBehaviour {
 
 	void Start() {
 		dayCurrent = 1;
-		timeCurrent = 90; // tmp
+		timeCurrent = 40; // tmp
 	}
 
 
@@ -28,10 +29,10 @@ public class GameLogic : MonoBehaviour {
 		if (!isNight)
 			return;
 		isNight = false;
+		isDayStarting = true;
 		dayCurrent++;
 		timeCurrent = 0;
 		Debug.Log("Day " + dayCurrent + " start !");
-		(GameObject.FindObjectOfType(typeof(Light)) as Light).enabled = true; // tmp
 	}
 
 
@@ -43,7 +44,11 @@ public class GameLogic : MonoBehaviour {
 		isNight = true;
 		isNightStarting = true;
 		Debug.Log("Night is falling, watch out !");
-		(GameObject.FindObjectOfType(typeof(Light)) as Light).enabled = false; // tmp
+	}
+
+
+	public bool IsDayStarting() {
+		return isDayStarting;
 	}
 
 
@@ -68,8 +73,8 @@ public class GameLogic : MonoBehaviour {
 	// Update day-night cycle
 	// --------------------------------------------
 	private void UpdateTime() {
-		if (isNightStarting)
-			isNightStarting = false; // True during only one frame
+		isDayStarting = false; // True during only one frame
+		isNightStarting = false; // True during only one frame
 
 
 		timeCurrent += Time.deltaTime;

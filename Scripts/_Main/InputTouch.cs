@@ -121,7 +121,7 @@ public class InputTouch : MonoBehaviour {
 			return;
 		}
 
-		if (touchPosDelta.magnitude > maxDistanceToDetectSingleTap)
+		if (touchPosDelta.magnitude > maxDistanceToDetectSingleTap || touchPosSpeed.magnitude > 0.5f)
 			sliding = true;
 	}
 

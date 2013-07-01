@@ -14,13 +14,8 @@ public class Character : MonoBehaviour {
 		SpecialMode,					// Each character in his own special mode
 	};
 	public State state;
-	/*private State _state;
-	public State state {
-		get { return _state; }
-		set { _state = value; }
-	}*/
-	public Game.CharacterType type;		// Profession
 
+	public int type;		// Profession (constant unique between 0 and 3)
 
 	// Move State - Position
 	private CharacterController controller;
@@ -42,16 +37,16 @@ public class Character : MonoBehaviour {
 	// Is it the character with the actual focus ?
 	// ----------------------------------------------
 	public bool IsSelected() {
-		return (Game.chrTypeSelected == type);
+		return (Game.chrSelected == type.GetHashCode());
 	}
 
 
 	// Switch the selected character
 	// ----------------------------------------------
-	public void SwitchFocusCharacter(Game.CharacterType newChrSelected) {
+	public void SwitchFocusCharacter(int newChrSelected) {
 		// TODO : check if current selected is not locked
-		Game.chrTypeSelected = newChrSelected;
-		Game.mainCamera.FocusOnSelectedChr();
+		Game.chrSelected = newChrSelected;
+		Game.mainCamera.FocusOnPosition(transform.position);
 	}
 
 
