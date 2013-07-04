@@ -125,9 +125,13 @@ public class Character : MonoBehaviour {
 
 		switch (state) {
 			case State.Idle:
+                break;
 			case State.Move:
 				UpdateStateMovement();
 				break;
+            case State.Sleep:
+                UpdateStateSleep();
+                break;
 		}
 	}
 
@@ -161,6 +165,27 @@ public class Character : MonoBehaviour {
 		controller.Move(normal.normalized * moveCurrentSpeed * moveMaxSpeed * Time.deltaTime);
 
 	}
+
+    // Getting into Sleep mode update
+    // ----------------------------------------------
+    private void UpdateStateSleep()
+    {
+        if (state == State.Sleep)
+        {
+            // Laying down
+            if (transform.eulerAngles.x > 360 - 85 || transform.eulerAngles.x == 0)
+            {
+                transform.Rotate(Vector3.left * Time.deltaTime * 75);
+            }
+            else
+            {
+                transform.Rotate(0, 0, 0);
+                //Stay out of the ground
+                transform.Translate(Vector3.forward * ((transform.position.y < 0.65) ? (Time.deltaTime * 10) : 0));
+            }
+        }
+        else return;
+    }
 
 
 	// Update for mouse input
