@@ -49,8 +49,11 @@ public class MainCamera : MonoBehaviour {
 
 
 	private void UpdateFree() {
+		if (Game.GetChrSelected().IsInSpecialMode())
+			return;
+
 		if (Game.inputTouch.GetSliding()) {
-			Vector2 speedPos = Game.inputTouch.GetTouchSpeed();
+			Vector2 speedPos = Game.inputTouch.GetTouchPosSpeed();
 			nextPos = new Vector3(nextPos.x - speedPos.x, nextPos.y, nextPos.z - speedPos.y);
 		}
 	}

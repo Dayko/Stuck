@@ -5,6 +5,7 @@ public class InputTouch : MonoBehaviour {
 
 	private enum TouchState { NOTHING, STARTTOUCH, TOUCH, ENDTOUCH };
 	private TouchState touchState;
+	private TouchState nextTouchState;
 
 	// Touch Actions
 	private bool singleTap;				// Quick touch on screen (without moving finger a lot)
@@ -14,6 +15,7 @@ public class InputTouch : MonoBehaviour {
 	private float touchTimeStart;
 	private float touchTimeEnd;
 	private Vector2 touchPosStart;		// Position on screen where touch start
+	private Vector2 touchPosCurrent;	// Distance between start and actual position
 	private Vector2 touchPosDelta;		// Distance between start and actual position
 	private Vector2 touchPosSpeed;		// Actual speed of touch on screen
 	private Vector2 touchPosEnd;		// Position on screen where touch end
@@ -30,14 +32,27 @@ public class InputTouch : MonoBehaviour {
 	}
 
 
+	public bool GetTouchDown() {
+		return (touchState == TouchState.STARTTOUCH);
+	}
+	public bool GetTouch() {
+		return (touchState == TouchState.TOUCH);
+	}
+	public bool GetTouchUp() {
+		return (touchState == TouchState.ENDTOUCH);
+	}
 
-	public Vector2 GetTouchStart() {
+
+	public Vector2 GetTouchPosStart() {
 		return touchPosStart;
 	}
-	public Vector2 GetTouchDelta() {
+	public Vector2 GetTouchPos() {
+		return touchPosCurrent;
+	}
+	public Vector2 GetTouchPosDelta() {
 		return touchPosDelta;
 	}
-	public Vector2 GetTouchSpeed() {
+	public Vector2 GetTouchPosSpeed() {
 		return touchPosSpeed;
 	}
 
@@ -46,7 +61,7 @@ public class InputTouch : MonoBehaviour {
 	// Update input informations and then update each action
 	// --------------------------------------------------------
 	void Update() {
-		TouchState newTouchState = touchState;
+		touchState = nextTouchState;
 
 		switch (touchState) {
 			case TouchState.NOTHING: // Wait for a touch
@@ -54,7 +69,7 @@ public class InputTouch : MonoBehaviour {
 				touchPosSpeed = Vector2.Lerp(touchPosSpeed, Vector2.zero, Time.deltaTime * speedDecreaseSpeedTime);
 
 				if (Input.GetMouseButtonDown(0)) {
-					newTouchState = TouchState.STARTTOUCH;
+					nextTouchState = TouchState.STARTTOUCH;
 				}
 				break;
 
@@ -64,16 +79,17 @@ public class InputTouch : MonoBehaviour {
 				touchPosDelta = Vector2.zero;
 				touchPosSpeed = Vector2.zero;
 
-				newTouchState = TouchState.TOUCH;
+				nextTouchState = TouchState.TOUCH;
 				break;
 
 			case TouchState.TOUCH: // Touch in progress
+				touchPosCurrent = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 				Vector2 posDelta = touchPosDelta;
-				touchPosDelta = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - touchPosStart;
+				touchPosDelta = touchPosCurrent - touchPosStart;
 				touchPosSpeed = touchPosDelta - posDelta;
 
 				if (!Input.GetMouseButton(0) || Input.GetMouseButtonUp(0)) {
-					newTouchState = TouchState.ENDTOUCH;
+					nextTouchState = TouchState.ENDTOUCH;
 				}
 				
 				break;
@@ -82,7 +98,7 @@ public class InputTouch : MonoBehaviour {
 				touchTimeEnd = Time.time;
 				touchPosEnd = Input.mousePosition;
 
-				newTouchState = TouchState.NOTHING;
+				nextTouchState = TouchState.NOTHING;
 				break;
 
 		}
@@ -90,8 +106,6 @@ public class InputTouch : MonoBehaviour {
 		// Call actions update
 		UpdateSingleTap();
 		UpdateSliding();
-
-		touchState = newTouchState;
 	}
 
 	
